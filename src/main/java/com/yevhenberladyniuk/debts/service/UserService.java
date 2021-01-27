@@ -1,2 +1,9 @@
-package com.yevhenberladyniuk.debts.service;public interface UserService {
+package com.yevhenberladyniuk.debts.service;
+
+import com.yevhenberladyniuk.debts.dto.CreateUserForm;
+
+public interface UserService {
+
+    void create(CreateUserForm createUserForm);
+
 }
