@@ -5,9 +5,6 @@
     <title>Document</title>
 </head>
 <body>
-    <#if registerError??>
-        <div class="form-row form-control m-3 alert alert-danger" role="alert">${registerError}</div>
-    </#if>
     <div class="w-100 h-100 d-flex align-items-center justify-content-center">
         <div class="col-md-8">
             <form action="/user/register" method="POST" class="form-signin">
@@ -17,7 +14,7 @@
                            autofocus="true" required/>
                     <input name="lastName" type="text" class="form-control m-3" placeholder="Прізвище"
                            autofocus="true" required/>
-                    <input name="username" type="text" class="form-control m-3" placeholder="Email"
+                    <input name="username" type="email" class="form-control m-3" placeholder="Email"
                            autofocus="true" required/>
                     <input name="password" type="password" class="form-control m-3" placeholder="Пароль" required/>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">

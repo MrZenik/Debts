@@ -29,6 +29,6 @@ public class UserController {
     public String create(CreateUserForm createUserForm) {
 
         userService.create(createUserForm);
-        return "redirect:/main";
+        return "redirect:/";
     }
 }
