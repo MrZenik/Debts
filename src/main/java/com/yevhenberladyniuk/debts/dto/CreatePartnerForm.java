@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserForm {
+public class CreatePartnerForm {
 
     @NotBlank
     private String firstName;
@@ -18,8 +18,6 @@ public class CreateUserForm {
     private String lastName;
 
     @NotBlank
-    private String username;
+    private double debt;
 
-    @NotBlank
-    private String password;
 }
