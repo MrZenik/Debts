@@ -4,8 +4,8 @@
     <title>Login</title>
 </head>
 <body>
-
-<div class="w-100 h-100 d-flex align-items-center justify-content-center">
+<#include "../include/navbar.ftl" >
+<div class="d-flex align-items-center justify-content-center">
     <div class="col-md-8">
         <form method="post" action="/login">
             <h2 class="d-flex justify-content-center">Увійти</h2>

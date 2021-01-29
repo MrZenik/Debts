@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <#include "../include/coreDependencies.ftl" >
-    <title>Document</title>
+    <title>Registration</title>
 </head>
 <body>
+<#include "../include/navbar.ftl" >
     <div class="w-100 h-100 d-flex align-items-center justify-content-center">
         <div class="col-md-8">
             <form action="/user/register" method="POST" class="form-signin">
