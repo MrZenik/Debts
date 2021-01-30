@@ -1,6 +1,7 @@
 package com.yevhenberladyniuk.debts.service;
 
 import com.yevhenberladyniuk.debts.domain.Partner;
+import com.yevhenberladyniuk.debts.domain.User;
 import com.yevhenberladyniuk.debts.dto.CreatePartnerForm;
 import com.yevhenberladyniuk.debts.dto.PartnerDto;
 import com.yevhenberladyniuk.debts.repository.PartnerRepository;
@@ -22,42 +23,50 @@ public class PartnerServiceImpl implements PartnerService{
     }
 
     @Override
-    public void create(CreatePartnerForm createPartnerForm, Long userId) {
+    public void create(CreatePartnerForm createPartnerForm, User user) {
 
         Partner partner = Partner.builder()
-                .userId(userId)
+                .userId(user.getId())
                 .firstName(createPartnerForm.getFirstName())
                 .lastName(createPartnerForm.getLastName())
                 .debt(createPartnerForm.getDebt())
-                .date(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         partnerRepository.save(partner);
     }
 
     @Override
-    public List<Partner> findAllByUserId(Long userId) {
-        return partnerRepository.findAllByUserId(userId);
+    public List<Partner> findAll(User user) {
+        return partnerRepository.findAllByUserId(user.getId());
     }
 
     @Override
-    public void deletePartnerById(Long id) {
+    public void deletePartnerById(Long id, User user) {
+        findPartnerById(id, user);
         partnerRepository.deleteById(id);
     }
 
     @Override
-    public Optional<Partner> findPartnerById(Long id) {
-        return partnerRepository.findById(id);
+    public Partner findPartnerById(Long id, User user) {
+
+        Optional<Partner> optionalPartner = partnerRepository.findById(id);
+        Partner partner = optionalPartner.orElseThrow( () -> new RuntimeException("Partner not found"));
+
+        if(partner.getUserId().equals(user.getId())){
+            return partner;
+        }
+
+        throw new RuntimeException("Partner not found");
     }
 
     @Override
-    public void updatePartnerById(Long id, PartnerDto partnerDto) {
+    public void updatePartnerById(Long id, PartnerDto partnerDto, User user) {
 
-        Optional<Partner> optionalPartner = findPartnerById(id);
-        Partner partner = optionalPartner.orElseThrow();
+        Partner partner = findPartnerById(id, user);
         partner.setLastName(partnerDto.getLastName());
         partner.setFirstName(partnerDto.getFirstName());
-        partner.setDate(LocalDateTime.now());
+        partner.setUpdatedAt(LocalDateTime.now());
         partnerRepository.save(partner);
 
     }

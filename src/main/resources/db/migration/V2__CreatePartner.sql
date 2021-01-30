@@ -5,7 +5,8 @@ create table if not exists "partner"
     first_name varchar(255) not null,
     last_name  varchar(255) not null,
     debt       decimal      not null,
-    date       timestamp    not null,
+    updated_at  timestamp    not null,
+    active     boolean      not null,
 
     primary key (id),
     foreign key(user_id) references "user"(id)
