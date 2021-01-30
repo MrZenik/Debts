@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +22,9 @@ public class PartnerDto {
     @NotBlank
     private String lastName;
 
+    @NotBlank
+    private double debt;
+
+    @NotBlank
+    private LocalDateTime updatedAt;
 }

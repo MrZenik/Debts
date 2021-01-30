@@ -22,8 +22,8 @@
                 <td>${partner.firstName}</td>
                 <td>${partner.lastName}</td>
                 <td>${partner.debt}</td>
-                <td>${partner.date.dayOfMonth + "-" + partner.date.getMonthValue()},
-                    ${partner.date.hour + ":" + partner.date.minute}
+                <td>${partner.updatedAt.month + " " + partner.updatedAt.dayOfMonth},
+                    ${partner.updatedAt.hour + ":" + partner.updatedAt.minute}
                 </td>
                 <td>
                     <form action="/partners/delete/${partner.id}" method="post">
@@ -46,5 +46,6 @@
             <input type="submit" class="btn btn-light m-3" value="Додати партнера"/>
         </div>
     </form>
+
 </body>
 </html>

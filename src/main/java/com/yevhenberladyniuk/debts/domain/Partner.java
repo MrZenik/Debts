@@ -25,5 +25,7 @@ public class Partner {
 
     private double debt;
 
-    private LocalDateTime date;
+    private LocalDateTime updatedAt;
+
+    private boolean active;
 }
