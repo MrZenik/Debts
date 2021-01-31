@@ -31,6 +31,7 @@ public class PartnerServiceImpl implements PartnerService{
                 .lastName(createPartnerForm.getLastName())
                 .debt(createPartnerForm.getDebt())
                 .updatedAt(LocalDateTime.now())
+                .active(true)
                 .build();
 
         partnerRepository.save(partner);
@@ -38,19 +39,20 @@ public class PartnerServiceImpl implements PartnerService{
 
     @Override
     public List<Partner> findAll(User user) {
-        return partnerRepository.findAllByUserId(user.getId());
+        return partnerRepository.findAllByUserIdAndActive(user.getId(), true);
     }
 
     @Override
     public void deletePartnerById(Long id, User user) {
-        findPartnerById(id, user);
-        partnerRepository.deleteById(id);
+        Partner partner = findPartnerById(id, user);
+        partner.setActive(false);
+        partnerRepository.save(partner);
     }
 
     @Override
     public Partner findPartnerById(Long id, User user) {
 
-        Optional<Partner> optionalPartner = partnerRepository.findById(id);
+        Optional<Partner> optionalPartner = partnerRepository.findByIdAndActive(id, true);
         Partner partner = optionalPartner.orElseThrow( () -> new RuntimeException("Partner not found"));
 
         if(partner.getUserId().equals(user.getId())){
