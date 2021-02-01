@@ -13,9 +13,9 @@ public interface PartnerService {
 
     List<Partner> findAll(User user);
 
-    void deletePartnerById(Long id, User user);
+    void deleteById(Long id, User user);
 
-    Partner findPartnerById(Long id, User user);
+    Partner findById(Long id, User user);
 
-    void updatePartnerById(Long id, PartnerDto partnerDto, User user);
+    void updateById(Long id, PartnerDto partnerDto, User user);
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface PartnerRepository extends CrudRepository<Partner, Long> {
 
-    Optional<Partner> findByIdAndActive(Long id, boolean active);
+    Optional<Partner> findByIdAndActiveAndUserId (Long id, boolean active, Long userId);
 
     List<Partner> findAllByUserIdAndActive(Long userId, boolean active);
 

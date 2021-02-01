@@ -5,7 +5,6 @@ import com.yevhenberladyniuk.debts.domain.User;
 import com.yevhenberladyniuk.debts.dto.CreatePartnerForm;
 import com.yevhenberladyniuk.debts.dto.PartnerDto;
 import com.yevhenberladyniuk.debts.service.PartnerService;
-import com.yevhenberladyniuk.debts.service.PartnerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/partners")
@@ -22,7 +20,7 @@ public class PartnerController {
     private PartnerService partnerService;
 
     @Autowired
-    public PartnerController(PartnerServiceImpl partnerService) {
+    public PartnerController(PartnerService partnerService) {
         this.partnerService = partnerService;
     }
 
@@ -50,14 +48,14 @@ public class PartnerController {
     @PostMapping("/delete/{id}")
     public String deletePartner(@PathVariable Long id, @AuthenticationPrincipal User user){
 
-        partnerService.deletePartnerById(id, user);
+        partnerService.deleteById(id, user);
         return "redirect:/partners";
     }
 
     @GetMapping("/edit/{id}")
     public String editPartner(@PathVariable Long id, Model model, @AuthenticationPrincipal User user){
 
-        Partner partner = partnerService.findPartnerById(id, user);
+        Partner partner = partnerService.findById(id, user);
         model.addAttribute("partner", partner);
 
         return "partner/edit";
@@ -66,7 +64,7 @@ public class PartnerController {
     @PostMapping("/edit/{id}")
     public String editPartner(@PathVariable Long id, PartnerDto partnerDto, @AuthenticationPrincipal User user){
 
-        partnerService.updatePartnerById(id, partnerDto, user);
+        partnerService.updateById(id, partnerDto, user);
         return "redirect:/partners";
     }
 }
