@@ -6,7 +6,13 @@
     <title>Partners</title>
 </head>
 <body>
-<#include "../include/navbar.ftl" >
+    <#include "../include/navbar.ftl" >
+    <form action="/partners/new" method="get">
+        <div class="form-row justify-content-center">
+            <input type="submit" class="btn btn-light m-3" value="Додати партнера"/>
+        </div>
+    </form>
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -41,11 +47,7 @@
         </#list>
         </tbody>
     </table>
-    <form action="/partners/new" method="get">
-        <div class="form-row justify-content-center">
-            <input type="submit" class="btn btn-light m-3" value="Додати партнера"/>
-        </div>
-    </form>
+
 
 </body>
 </html>

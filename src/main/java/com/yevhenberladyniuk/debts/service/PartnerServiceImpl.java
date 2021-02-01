@@ -43,29 +43,23 @@ public class PartnerServiceImpl implements PartnerService{
     }
 
     @Override
-    public void deletePartnerById(Long id, User user) {
-        Partner partner = findPartnerById(id, user);
+    public void deleteById(Long id, User user) {
+        Partner partner = findById(id, user);
         partner.setActive(false);
         partnerRepository.save(partner);
     }
 
     @Override
-    public Partner findPartnerById(Long id, User user) {
+    public Partner findById(Long id, User user) {
 
-        Optional<Partner> optionalPartner = partnerRepository.findByIdAndActive(id, true);
-        Partner partner = optionalPartner.orElseThrow( () -> new RuntimeException("Partner not found"));
-
-        if(partner.getUserId().equals(user.getId())){
-            return partner;
-        }
-
-        throw new RuntimeException("Partner not found");
+        Optional<Partner> optionalPartner = partnerRepository.findByIdAndActiveAndUserId (id, true, user.getId());
+        return optionalPartner.orElseThrow( () -> new RuntimeException("Partner not found"));
     }
 
     @Override
-    public void updatePartnerById(Long id, PartnerDto partnerDto, User user) {
+    public void updateById(Long id, PartnerDto partnerDto, User user) {
 
-        Partner partner = findPartnerById(id, user);
+        Partner partner = findById(id, user);
         partner.setLastName(partnerDto.getLastName());
         partner.setFirstName(partnerDto.getFirstName());
         partner.setUpdatedAt(LocalDateTime.now());
