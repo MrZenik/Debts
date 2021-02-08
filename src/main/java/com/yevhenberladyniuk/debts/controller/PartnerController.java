@@ -67,4 +67,13 @@ public class PartnerController {
         partnerService.updateById(id, partnerDto, user);
         return "redirect:/partners";
     }
+
+    @GetMapping("/{partnerId}")
+    public String findPartner(@PathVariable Long partnerId, Model model, @AuthenticationPrincipal User user){
+
+        Partner partner = partnerService.findById(partnerId, user);
+        model.addAttribute("partner", partner);
+
+        return "partner/partnerInfo";
+    }
 }

@@ -62,7 +62,6 @@ public class PartnerServiceImpl implements PartnerService{
         Partner partner = findById(id, user);
         partner.setLastName(partnerDto.getLastName());
         partner.setFirstName(partnerDto.getFirstName());
-        partner.setDebt(partnerDto.getDebt());
         partner.setUpdatedAt(LocalDateTime.now());
         partnerRepository.save(partner);
 
