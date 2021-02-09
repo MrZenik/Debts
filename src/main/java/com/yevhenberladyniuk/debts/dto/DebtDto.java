@@ -11,12 +11,11 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateDebt {
+public class DebtDto {
 
     @NotBlank
     private String comment;
 
-    @NotBlank
     private double transactionAmount;
 
     private Long partnerId;

@@ -2,66 +2,88 @@ package com.yevhenberladyniuk.debts.service;
 
 import com.yevhenberladyniuk.debts.domain.Debt;
 import com.yevhenberladyniuk.debts.domain.Partner;
+import com.yevhenberladyniuk.debts.domain.User;
 import com.yevhenberladyniuk.debts.dto.CreateDebt;
+import com.yevhenberladyniuk.debts.dto.DebtDto;
 import com.yevhenberladyniuk.debts.repository.DebtRepository;
 import com.yevhenberladyniuk.debts.repository.PartnerRepository;
-import org.hibernate.validator.internal.util.privilegedactions.LoadClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DebtServiceImpl implements DebtService{
 
-    DebtRepository debtRepository;
+    private DebtRepository debtRepository;
 
-    PartnerRepository partnerRepository;
+    private PartnerRepository partnerRepository;
+
+    private  PartnerService partnerService;
 
     @Autowired
-    public DebtServiceImpl(DebtRepository debtRepository, PartnerRepository partnerRepository) {
+    public DebtServiceImpl(DebtRepository debtRepository, PartnerRepository partnerRepository, PartnerService partnerService) {
         this.debtRepository = debtRepository;
         this.partnerRepository = partnerRepository;
+        this.partnerService = partnerService;
     }
 
     @Override
-    public List<Debt> findAllByPartner(Partner partner) {
-        return debtRepository.findAllByPartnerId(partner.getId());
+    public List<Debt> findAllByPartner(Long partnerId, User user) {
+        return debtRepository.findAllByPartnerIdOrderByTransactionDateDesc(partnerId);
     }
 
     @Override
-    public void create(CreateDebt createDebt, Partner partner) {
+    @Transactional
+    public void create(CreateDebt createDebt, Long partnerId, User user) {
 
-        LocalDateTime localDateTime;
-
-        if(createDebt.getTransactionDate() == null){
-            localDateTime = LocalDateTime.now();
-        }else{
-            localDateTime = createDebt.getTransactionDate();
-        }
+        LocalDateTime transactionDate = createDebt.getTransactionDate() == null ?
+                                                            LocalDateTime.now() : createDebt.getTransactionDate() ;
 
         Debt debt = Debt.builder()
-                .partnerId(partner.getId())
+                .partnerId(partnerId)
                 .comment(createDebt.getComment())
                 .transactionAmount(createDebt.getTransactionAmount())
-                .transactionDate(localDateTime)
+                .transactionDate(transactionDate)
                 .build();
 
         debtRepository.save(debt);
 
-        partner.setDebt(partner.getDebt() - createDebt.getTransactionAmount());
+        Partner partner = partnerService.findById(partnerId, user);
+        partner.setDebt(partner.getDebt() + createDebt.getTransactionAmount());
         partner.setUpdatedAt(LocalDateTime.now());
         partnerRepository.save(partner);
 
     }
 
     @Override
-    public void deleteById(Partner partner, Long id) {
+    public void deleteById(Long partnerId, Long id, User user) {
 
-        Optional<Debt> optionalDebt = debtRepository.findByIdAndPartnerId(id, partner.getId());
-        debtRepository.deleteById(optionalDebt.orElseThrow( () -> new RuntimeException("Debt not found")).getId());
+        Partner partner = partnerService.findById(partnerId, user);
+        Debt debt = findByIdAndPartnerId(id, partner.getId(), user);
+        debtRepository.deleteById(debt.getId());
 
     }
+
+    @Override
+    public void updateById(Long id, DebtDto debtDto, Long partnerId, User user) {
+
+        Debt debt = (findByIdAndPartnerId(id, partnerId, user));
+
+        LocalDateTime transactionDate = debtDto.getTransactionDate() == null ?
+                                                        LocalDateTime.now() : debtDto.getTransactionDate() ;
+        debt.setComment(debtDto.getComment());
+        debt.setTransactionDate(transactionDate);
+
+        debtRepository.save(debt);
+    }
+
+    @Override
+    public Debt findByIdAndPartnerId(Long id, Long partnerId, User user){
+        return (debtRepository.findByIdAndPartnerId(id, partnerId)).orElseThrow(
+                            () -> new RuntimeException("Debt not found"));
+    }
+
 }

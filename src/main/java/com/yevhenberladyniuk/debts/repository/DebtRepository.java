@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface DebtRepository extends CrudRepository<Debt, Long> {
 
-    List<Debt> findAllByPartnerId (Long id);
+    List<Debt> findAllByPartnerIdOrderByTransactionDateDesc (Long id);
 
     Optional<Debt> findByIdAndPartnerId(Long id, Long partnerId);
 

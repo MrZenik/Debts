@@ -8,13 +8,14 @@
 <#include "../include/navbar.ftl" >
 <div class="w-100 h-100 d-flex align-items-center justify-content-center">
     <div class="col-md-8">
-        <form action="/debts/create/${partnerId}" method="post" class="form-signin">
+        <form action="/partners/${partnerId}/debts/create" method="post" class="form-signin">
             <h2 class="form-heading text-center p-3">Додати транзакцію</h2>
             <div class="form-group">
                 <input name="transactionAmount" type="number" step="any" class="form-control m-3" placeholder="Сума"
                        autofocus="true" required/>
                 <input name="comment" type="text" class="form-control m-3" placeholder="Коментар" required/>
                 <input name="transactionDate" id="datetime-local" type="datetime-local" class="form-control m-3" />
+                <input type="hidden" name="partnerId" value="${partnerId}">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                 <div class="form-row justify-content-center">
                     <button class="btn btn-primary p-3 w-50" type="submit">Додати</button>

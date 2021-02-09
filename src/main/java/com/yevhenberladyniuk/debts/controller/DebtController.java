@@ -1,9 +1,9 @@
 package com.yevhenberladyniuk.debts.controller;
 
-import com.yevhenberladyniuk.debts.domain.Debt;
 import com.yevhenberladyniuk.debts.domain.Partner;
 import com.yevhenberladyniuk.debts.domain.User;
 import com.yevhenberladyniuk.debts.dto.CreateDebt;
+import com.yevhenberladyniuk.debts.dto.DebtDto;
 import com.yevhenberladyniuk.debts.service.DebtService;
 import com.yevhenberladyniuk.debts.service.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-
 @Controller
-@RequestMapping("/debts")
+@RequestMapping("/partners/{partnerId}/debts")
 public class DebtController {
 
     private DebtService debtService;
@@ -31,18 +29,8 @@ public class DebtController {
         this.partnerService = partnerService;
     }
 
-    @GetMapping("/{partnerId}")
-    public String findDebt(@PathVariable Long partnerId, Model model, @AuthenticationPrincipal User user){
-
-        List<Debt> debts = debtService.findAllByPartner(partnerService.findById(partnerId, user));
-        model.addAttribute("debts", debts);
-        model.addAttribute("partner", partnerService.findById(partnerId, user));
-
-        return "debt/debtList";
-    }
-
-    @GetMapping("/create/{partnerId}")
-    public String create(@PathVariable Long partnerId, @AuthenticationPrincipal User user, Model model){
+    @GetMapping("/create")
+    public String create(@PathVariable Long partnerId, Model model, @AuthenticationPrincipal User user){
 
         Partner partner = partnerService.findById(partnerId, user);
         model.addAttribute("partner", partner);
@@ -50,20 +38,36 @@ public class DebtController {
         return "debt/create";
     }
 
-    @PostMapping("/create/{partnerId}")
+    @PostMapping("/create")
     public String create(CreateDebt createDebt, @PathVariable Long partnerId, @AuthenticationPrincipal User user){
 
-        Partner partner = partnerService.findById(partnerId, user);
-        debtService.create(createDebt, partner);
+        debtService.create(createDebt, partnerId, user);
 
-        return "redirect:/debts/" + partner.getId();
+        return "redirect:/partners/" + partnerId;
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteDebt(@PathVariable Long id, Long partnerId, @AuthenticationPrincipal User user){
-        debtService.deleteById(partnerService.findById(partnerId, user), id);
+    public String deleteDebt(@PathVariable Long id, @PathVariable Long partnerId, @AuthenticationPrincipal User user){
 
-        return "redirect:/debts/" + partnerId;
+        debtService.deleteById(partnerId, id, user);
+
+        return "redirect:/partners/" + partnerId;
+    }
+
+    @GetMapping("/edit/{id}")
+    public String update(@PathVariable Long partnerId, @PathVariable Long id, Model model, @AuthenticationPrincipal User user){
+
+        model.addAttribute("partner", partnerService.findById(partnerId, user));
+        model.addAttribute("debt", debtService.findByIdAndPartnerId(id, partnerId, user));
+
+        return "debt/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String update(@PathVariable Long partnerId, @PathVariable Long id, DebtDto debtDto, @AuthenticationPrincipal User user){
+
+        debtService.updateById(id, debtDto, partnerId, user);
+        return "redirect:/partners/" + partnerId;
     }
 
 }
