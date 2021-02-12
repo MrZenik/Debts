@@ -2,7 +2,7 @@ package com.yevhenberladyniuk.debts.controller;
 
 import com.yevhenberladyniuk.debts.domain.Partner;
 import com.yevhenberladyniuk.debts.domain.User;
-import com.yevhenberladyniuk.debts.dto.CreateDebt;
+import com.yevhenberladyniuk.debts.dto.CreateDebtForm;
 import com.yevhenberladyniuk.debts.dto.DebtDto;
 import com.yevhenberladyniuk.debts.service.DebtService;
 import com.yevhenberladyniuk.debts.service.PartnerService;
@@ -39,9 +39,9 @@ public class DebtController {
     }
 
     @PostMapping("/create")
-    public String create(CreateDebt createDebt, @PathVariable Long partnerId, @AuthenticationPrincipal User user){
+    public String create(CreateDebtForm createDebt, @PathVariable Long partnerId, @AuthenticationPrincipal User user){
 
-        debtService.create(createDebt, partnerId, user);
+        debtService.create(createDebt, user);
 
         return "redirect:/partners/" + partnerId;
     }

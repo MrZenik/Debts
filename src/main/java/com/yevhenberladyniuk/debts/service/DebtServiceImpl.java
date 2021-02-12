@@ -3,7 +3,7 @@ package com.yevhenberladyniuk.debts.service;
 import com.yevhenberladyniuk.debts.domain.Debt;
 import com.yevhenberladyniuk.debts.domain.Partner;
 import com.yevhenberladyniuk.debts.domain.User;
-import com.yevhenberladyniuk.debts.dto.CreateDebt;
+import com.yevhenberladyniuk.debts.dto.CreateDebtForm;
 import com.yevhenberladyniuk.debts.dto.DebtDto;
 import com.yevhenberladyniuk.debts.repository.DebtRepository;
 import com.yevhenberladyniuk.debts.repository.PartnerRepository;
@@ -31,19 +31,20 @@ public class DebtServiceImpl implements DebtService{
     }
 
     @Override
-    public List<Debt> findAllByPartner(Long partnerId, User user) {
+    public List<Debt> findAllByPartnerId(Long partnerId, User user) {
+        checkAccessToPartner(partnerId, user);
         return debtRepository.findAllByPartnerIdOrderByTransactionDateDesc(partnerId);
     }
 
     @Override
     @Transactional
-    public void create(CreateDebt createDebt, Long partnerId, User user) {
+    public void create(CreateDebtForm createDebt, User user) {
 
         LocalDateTime transactionDate = createDebt.getTransactionDate() == null ?
                                                             LocalDateTime.now() : createDebt.getTransactionDate() ;
 
         Debt debt = Debt.builder()
-                .partnerId(partnerId)
+                .partnerId(createDebt.getPartnerId())
                 .comment(createDebt.getComment())
                 .transactionAmount(createDebt.getTransactionAmount())
                 .transactionDate(transactionDate)
@@ -51,7 +52,7 @@ public class DebtServiceImpl implements DebtService{
 
         debtRepository.save(debt);
 
-        Partner partner = partnerService.findById(partnerId, user);
+        Partner partner = checkAccessToPartner(createDebt.getPartnerId(), user);
         partner.setDebt(partner.getDebt() + createDebt.getTransactionAmount());
         partner.setUpdatedAt(LocalDateTime.now());
         partnerRepository.save(partner);
@@ -61,7 +62,7 @@ public class DebtServiceImpl implements DebtService{
     @Override
     public void deleteById(Long partnerId, Long id, User user) {
 
-        Partner partner = partnerService.findById(partnerId, user);
+        Partner partner = checkAccessToPartner(partnerId, user);
         Debt debt = findByIdAndPartnerId(id, partner.getId(), user);
         debtRepository.deleteById(debt.getId());
 
@@ -69,6 +70,8 @@ public class DebtServiceImpl implements DebtService{
 
     @Override
     public void updateById(Long id, DebtDto debtDto, Long partnerId, User user) {
+
+        checkAccessToPartner(partnerId, user);
 
         Debt debt = (findByIdAndPartnerId(id, partnerId, user));
 
@@ -82,8 +85,12 @@ public class DebtServiceImpl implements DebtService{
 
     @Override
     public Debt findByIdAndPartnerId(Long id, Long partnerId, User user){
+        checkAccessToPartner(partnerId, user);
         return (debtRepository.findByIdAndPartnerId(id, partnerId)).orElseThrow(
                             () -> new RuntimeException("Debt not found"));
     }
 
+    private Partner checkAccessToPartner(Long partnerId, User user){
+        return partnerService.findById(partnerId, user);
+    }
 }

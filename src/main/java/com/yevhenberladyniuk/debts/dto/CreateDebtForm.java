@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateDebt {
+public class CreateDebtForm {
 
     @NotBlank
     private String comment;

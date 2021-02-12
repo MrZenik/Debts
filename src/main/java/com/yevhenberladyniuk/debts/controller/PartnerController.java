@@ -79,7 +79,7 @@ public class PartnerController {
         Partner partner = partnerService.findById(partnerId, user);
         model.addAttribute("partner", partner);
 
-        List<Debt> debts = debtService.findAllByPartner(partnerId, user);
+        List<Debt> debts = debtService.findAllByPartnerId(partnerId, user);
         model.addAttribute("debts", debts);
 
         return "partner/partnerInfo";
