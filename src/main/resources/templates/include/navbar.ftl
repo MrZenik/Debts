@@ -9,6 +9,9 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/partners">Мої партнери <span class="sr-only">(current)</span></a>
             </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/partners/new">Додати партнера<span class="sr-only">(current)</span></a>
+            </li>
         </ul>
         <span class="navbar-text">
             <form action="/logout" method="POST">
