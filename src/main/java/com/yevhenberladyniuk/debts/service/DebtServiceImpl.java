@@ -40,6 +40,7 @@ public class DebtServiceImpl implements DebtService{
     @Transactional
     public void create(CreateDebtForm createDebt, User user) {
 
+        Partner partner = checkAccessToPartner(createDebt.getPartnerId(), user);
         LocalDateTime transactionDate = createDebt.getTransactionDate() == null ?
                                                             LocalDateTime.now() : createDebt.getTransactionDate() ;
 
@@ -52,7 +53,6 @@ public class DebtServiceImpl implements DebtService{
 
         debtRepository.save(debt);
 
-        Partner partner = checkAccessToPartner(createDebt.getPartnerId(), user);
         partner.setDebt(partner.getDebt() + createDebt.getTransactionAmount());
         partner.setUpdatedAt(LocalDateTime.now());
         partnerRepository.save(partner);
@@ -73,7 +73,7 @@ public class DebtServiceImpl implements DebtService{
 
         checkAccessToPartner(partnerId, user);
 
-        Debt debt = (findByIdAndPartnerId(id, partnerId, user));
+        Debt debt = findByIdAndPartnerId(id, partnerId, user);
 
         LocalDateTime transactionDate = debtDto.getTransactionDate() == null ?
                                                         LocalDateTime.now() : debtDto.getTransactionDate() ;
@@ -86,7 +86,7 @@ public class DebtServiceImpl implements DebtService{
     @Override
     public Debt findByIdAndPartnerId(Long id, Long partnerId, User user){
         checkAccessToPartner(partnerId, user);
-        return (debtRepository.findByIdAndPartnerId(id, partnerId)).orElseThrow(
+        return debtRepository.findByIdAndPartnerId(id, partnerId).orElseThrow(
                             () -> new RuntimeException("Debt not found"));
     }
 
